@@ -1,0 +1,45 @@
+.login-page-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+
+  .input-wrapper {
+    width: 500px;
+  }
+
+  .button-wrapper {
+    width: 500px;
+    display: flex;
+
+    .q-btn + .q-btn {
+      margin-left: 10px;
+    }
+  }
+}
+
+.q-table {
+  thead {
+    tr {
+      height: 60px;
+    }
+
+    th {
+      font-size: 14px;
+      font-weight: 700;
+      background-color: #eee;
+    }
+  }
+
+  tbody {
+    td {
+      height: 50px;
+      font-size: 15px;
+    }
+  }
+}
+
+.q-btn {
+  text-transform: lowercase;
+}
