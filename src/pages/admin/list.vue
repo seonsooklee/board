@@ -1,6 +1,14 @@
 <template>
   <div class="admin-list-wrapper">
     <div class="list-container q-mr-lg">
+      <div class="toolbar-wrapper">
+        <q-space />
+        <q-input v-model="search" outlined dense type="search" class="q-mr-md">
+          <template v-slot:append>
+            <q-icon name="search"/>
+          </template>
+        </q-input>
+      </div>
       <q-table
           :rows="userList"
           :columns="columns"
@@ -47,6 +55,7 @@ import {onMounted, ref} from "vue";
 import axios from "axios";
 import {instance} from "../../modules/axios";
 
+const search = ref()
 const headerInstance = instance()
 const userList = ref()
 const selectUser = ref(null)

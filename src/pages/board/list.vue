@@ -1,9 +1,9 @@
 <template>
   <div class="toolbar-wrapper">
     <q-space />
-    <q-input v-model="search" outlined dense type="search" class="q-mr-md">
+    <q-input v-model="search" clearable outlined dense type="search" class="q-mr-md" label="게시글 아이디">
       <template v-slot:append>
-        <q-icon name="search"/>
+        <q-icon name="search" @click="onClickSearch"/>
       </template>
     </q-input>
     <q-btn color="primary" label="게시글 등록" icon="add" unelevated @click="add"/>
@@ -63,6 +63,24 @@ const add = () => {
   router.push('create')
 }
 
+const onClickSearch = async () => {
+  if (search.value) {
+    try {
+      const response = await axios.get(`https://jssampletest.herokuapp.com/api/board/${search.value}`)
+      const data = response.data.data
+      search.value = null
+      if (data) {
+        list.value = []
+        list.value.push(data)
+      } else {
+        list.value = []
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+}
+
 
 onMounted(() => {
   fetchList()
@@ -71,8 +89,4 @@ onMounted(() => {
 </script>
 
 <style lang="scss" scoped>
-.toolbar-wrapper {
-  display: flex;
-  margin-bottom: 20px;
-}
 </style>
