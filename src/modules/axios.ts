@@ -1,3 +1,5 @@
+import axios from "axios";
+
 const toTokenJson = () => {
     const token = localStorage.getItem('originalToken')
     if (token) {
@@ -5,10 +7,12 @@ const toTokenJson = () => {
     }
 }
 
-export const instance = () => {
-    return {
-        headers: {
-            Authorization: 'Bearer ' + toTokenJson()
-        }
+export const instance = axios.create({
+    baseURL:'https://jssampletest.herokuapp.com/api/',
+    timeout: 600000,
+    headers: {
+        Authorization: 'Bearer ' + toTokenJson()
     }
-}
+})
+
+

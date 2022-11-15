@@ -12,8 +12,10 @@
       <q-table
           :rows="userList"
           :columns="columns"
-          row-key="name"
+          row-key="seq"
           @row-click="onClickRow"
+          v-model:pagination="pagination"
+          @request="onRequest"
           flat
       />
     </div>
@@ -67,10 +69,9 @@
 <script setup>
 import {onMounted, ref} from "vue";
 import axios from "axios";
-import {instance} from "../../modules/axios";
+import admin from "../../service/admin"
 
 const search = ref()
-const headerInstance = instance()
 const userList = ref()
 const selectUser = ref(null)
 const columns = [
@@ -84,14 +85,19 @@ const auth = ref()
 const authOptions = ['ROLE_ADMIN', 'ROLE_USER']
 const isEditMode = ref(false)
 
-const fetchUserList = async () => {
-  const data = {
-    page: 1,
-    size: 10
-  }
+const pagination = ref({
+  sortBy: 'desc',
+  descending: false,
+  page: 0,
+  rowsPerPage: 10,
+  rowsNumber: 10
+})
+
+const fetchUserList = async (page, size) => {
   try {
-    const response = await axios.get(`https://jssampletest.herokuapp.com/api/member/all?page=${data.page}&size=${data.size}`, headerInstance)
+    const response = await admin.fetchUserList(page, size)
     userList.value = response.data.data.list
+    pagination.value.rowsNumber = (response.data.data.totalSize - 1) * size
   } catch (error) {
     console.log(error)
   }
@@ -105,7 +111,7 @@ const onClickRow = async (evt, row, index) => {
 
 const fetchUserDetail = async (email) => {
   try {
-    const response = await axios.get(`https://jssampletest.herokuapp.com/api/member/?email=${email}`, headerInstance)
+    const response = await axios.get(email)
     selectUser.value = response.data.data
   } catch (error) {
     console.log(error)
@@ -114,7 +120,7 @@ const fetchUserDetail = async (email) => {
 
 const onClickSearch = async () => {
   try {
-    const response = await axios.get(`https://jssampletest.herokuapp.com/api/member/?email=${search.value}`, headerInstance)
+    const response = await admin.search(search.value)
     const data = response.data.data
     if (data) {
       search.value = ''
@@ -130,7 +136,7 @@ const onClickSearch = async () => {
 
 const deleteUser = async () => {
   const email = selectUser.value?.email
-  await axios.delete(`https://jssampletest.herokuapp.com/api/member/${email}`, headerInstance)
+  await admin.deleteUser(email)
   await fetchUserList()
 }
 
@@ -152,7 +158,7 @@ const editUser = async () => {
   }
 
   try {
-    const response = await axios.put('https://jssampletest.herokuapp.com/api/member/', data, headerInstance)
+    const response = await admin.editUser(data)
     return response.status
   } catch (error) {
     console.log(error)
@@ -166,7 +172,7 @@ const editAuth = async () => {
   }
 
   try {
-    await axios.put('https://jssampletest.herokuapp.com/api/member/auth', data, headerInstance)
+    await admin.editAuth(data)
   } catch (error) {
     console.log(error)
   }
@@ -179,8 +185,15 @@ const onClickEdit = async () => {
   selectUser.value = null
 }
 
+const onRequest = (props) => {
+  const { page, rowsPerPage } = props.pagination
+  fetchUserList(page - 1, rowsPerPage)
+  pagination.value.page = page
+  pagination.value.rowsPerPage = rowsPerPage
+}
+
 onMounted(() => {
-  fetchUserList()
+  fetchUserList(0, 10)
 })
 </script>
 

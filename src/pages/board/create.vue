@@ -19,14 +19,12 @@
 
 <script setup>
 import {ref} from "vue";
-import axios from "axios";
 import {useRouter} from "vue-router";
-import {instance} from "../../modules/axios";
+import board from "../../service/board"
 
 const router = useRouter()
 const title = ref('')
 const content = ref('')
-const headerInstance = instance()
 
 const add = async () => {
   const item = {
@@ -34,8 +32,7 @@ const add = async () => {
     content: content.value
   }
   try {
-    await axios.post('https://jssampletest.herokuapp.com/api/board/', item,headerInstance)
-
+    await board.addItem(item)
     await router.push('list')
 
   } catch (error) {

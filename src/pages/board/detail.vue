@@ -52,15 +52,13 @@
 <script setup>
 import {computed, onMounted, ref} from "vue";
 import {useRouter} from "vue-router";
-import axios from "axios";
 import {time} from '../../modules/monent';
 import {userInfo} from "../../store/user.ts";
-import {instance} from "../../modules/axios";
+import board from "../../service/board"
 
 const user = userInfo()
 const isReplyWriter = ref(false)
 const router = useRouter()
-const headerInstance = instance()
 const item = ref({
   seq: '',
   title: '',
@@ -78,7 +76,7 @@ const fetchDetail = async () => {
   const id = router.currentRoute.value.params.id
 
   try {
-    const response = await axios.get(`https://jssampletest.herokuapp.com/api/board/${id}`)
+    const response = await board.fetchDetail(id)
     const data = response.data.data
     item.value = {
       seq: data.seq,
@@ -142,7 +140,7 @@ const edit = () => {
 
 const del = async () => {
   try {
-    await axios.delete(`https://jssampletest.herokuapp.com/api/board/${item.value.seq}`, headerInstance)
+    await board.deleteItem(item.value.seq)
     await router.push('/main/list')
   } catch (error) {
     console.log(error)
@@ -155,7 +153,7 @@ const postReply = async () => {
     content: newReply.value
   }
   try {
-    await axios.post('https://jssampletest.herokuapp.com/api/board/reply', data, headerInstance)
+    await board.postReply(data)
 
     newReply.value = ''
     await fetchDetail()
@@ -173,8 +171,7 @@ const updateReply = async (seq) => {
   }
 
   try {
-    await axios.put('https://jssampletest.herokuapp.com/api/board/reply', data, headerInstance)
-
+    await board.updateReply(data)
     await fetchDetail()
 
   } catch (error) {
@@ -184,8 +181,7 @@ const updateReply = async (seq) => {
 
 const deleteReply = async (id) => {
   try {
-    await axios.delete(`https://jssampletest.herokuapp.com/api/board/reply/${id}`, headerInstance)
-
+    await board.deleteReply(id)
     await fetchDetail()
 
   } catch (error) {

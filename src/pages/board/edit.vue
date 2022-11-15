@@ -19,23 +19,21 @@
 
 <script setup>
 import {onMounted, ref} from "vue";
-import axios from "axios";
 import {useRouter} from "vue-router";
-import {instance} from "../../modules/axios";
+import board from "../../service/board"
 
 const title = ref('')
 const content = ref('')
 const seq = ref()
 const router = useRouter()
 
-const headerInstance = instance()
 
 const fetchItem = async () => {
   const id = router.currentRoute.value.params.id
   seq.value = id
 
   try {
-    const response = await axios.get(`https://jssampletest.herokuapp.com/api/board/${id}`)
+    const response = await board.fetchDetail(id)
     const result = response.data.data
     title.value = result.title
     content.value = result.content
@@ -56,7 +54,7 @@ const edit = async () => {
   }
 
   try {
-    await axios.put('https://jssampletest.herokuapp.com/api/board/', data, headerInstance)
+    await board.editItem(data)
     await router.back()
   } catch (error) {
     console.log(error)
@@ -65,7 +63,6 @@ const edit = async () => {
 
 onMounted(() => {
   fetchItem()
-
 })
 
 </script>
