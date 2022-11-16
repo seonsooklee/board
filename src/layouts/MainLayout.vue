@@ -55,7 +55,11 @@ const fetchEmail = () => {
 }
 
 const logout = () => {
-  user.addUserInfo(null)
+  user.addUserInfo ({
+    email: null,
+    auth: null,
+    isLogin: false
+  })
   localStorage.removeItem('originalToken')
   localStorage.removeItem('decodeToken')
   router.push('/login')
