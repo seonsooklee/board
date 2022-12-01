@@ -47,6 +47,12 @@
       </div>
     </template>
   </div>
+  <q-inner-loading :showing="isLoading">
+    <q-spinner-ios
+        color="primary"
+        size="3em"
+    />
+  </q-inner-loading>
 </template>
 
 <script setup>
@@ -71,6 +77,7 @@ const item = ref({
 })
 const newReply = ref()
 const editReply = ref()
+const isLoading = ref(true)
 
 const fetchDetail = async () => {
   const id = router.currentRoute.value.params.id
@@ -95,6 +102,8 @@ const fetchDetail = async () => {
           editMode: false,
         })
     )
+
+    isLoading.value = false
 
   } catch (error) {
     console.log(error)

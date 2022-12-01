@@ -9,19 +9,20 @@
     <q-btn color="primary" label="게시글 등록" icon="add" unelevated @click="add"/>
   </div>
   <q-table
+      v-model:pagination="pagination"
       :columns="columns"
       :rows="list"
       row-key="name"
       @row-click="onClickRow"
-      flat
-      v-model:pagination="pagination"
       @request="onRequest"
+      flat
+      :loading="isLoading"
+      hide-no-data
   />
 </template>
 
 <script setup>
 import {onMounted, ref} from "vue";
-import axios from "axios";
 import {useRouter} from "vue-router";
 import board from "../../service/board"
 
@@ -52,6 +53,7 @@ const columns = [
     sortable: false
   },
 ]
+const isLoading = ref(true)
 
 const fetchList = async (page, size) => {
   try {
@@ -59,6 +61,7 @@ const fetchList = async (page, size) => {
     const data = response.data.data.list
     pagination.value.rowsNumber = (response.data.data.totalSize - 1) * size
     list.value = data
+    isLoading.value = false
   } catch (error) {
     console.log(error)
   }
@@ -91,6 +94,7 @@ const onClickSearch = async () => {
 }
 
 const onRequest = (props) => {
+  isLoading.value = true
   const { page, rowsPerPage } = props.pagination
   fetchList(page - 1, rowsPerPage)
   pagination.value.page = page
@@ -104,4 +108,10 @@ onMounted(() => {
 </script>
 
 <style lang="scss" scoped>
+.loading-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
 </style>

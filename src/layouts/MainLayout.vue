@@ -24,7 +24,7 @@
       </q-toolbar>
     </q-header>
 
-    <q-page-container>
+    <q-page-container style="height: 100vh">
       <BaseBreadCrumbs />
       <div class="content-wrapper">
         <div class="content">
@@ -98,6 +98,9 @@ onMounted(() => (
   display: flex;
   justify-content: center;
   padding: 50px;
+  height: calc(100% - 80px);
+  box-sizing: border-box;
+  overflow-y: auto;
   .content {
     width: 1440px;
   }
