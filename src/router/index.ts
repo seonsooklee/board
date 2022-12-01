@@ -9,10 +9,16 @@ const router = createRouter({
 
 router.beforeEach(async (to, fo) => {
     const user = userInfo()
+
     if (!user.getUserInfo.isLogin) {
         if (to.path === '/login') {
             return true;
         }
+
+        if (to.path === '/join') {
+           return true;
+        }
+
         return '/login'
 
     } else {
