@@ -1,20 +1,41 @@
 <template>
   <div class="login-page-wrapper">
-    <div class="input-wrapper q-mb-lg">
-      <q-input
-          v-model="email"
-          class="q-mb-md"
-          label="이메일"/>
-      <q-input
-          v-model="pw"
-          label="비밀번호"/>
-    </div>
-    {{ message }}
-    <div class="button-wrapper">
-      <q-space/>
-      <q-btn color="primary" label="로그인" size="lg" @click="login"/>
-      <q-btn color="primary" label="회원가입" size="lg" @click="join"/>
-    </div>
+    <form
+        @submit.prevent="login"
+        @reset="join">
+      <div class="input-wrapper q-mb-lg">
+        <q-input
+            v-model="email"
+            class="q-mb-md"
+            label="이메일"
+            :rules="[val => isRequired(val)]"
+            outlined/>
+        <q-input
+            v-model="pw"
+            label="비밀번호"
+            :rules="[val => isRequired(val)]"
+            :type="isPwd ? 'password' : 'text'"
+            outlined>
+          <template v-slot:append>
+            <q-icon
+                :name="isPwd ? 'visibility_off' : 'visibility'"
+                class="cursor-pointer"
+                @click="isPwd = !isPwd"
+            />
+          </template>
+        </q-input>
+        <div
+            v-if="errorMessage"
+            class="error-message">
+          '이메일 또는 비밀번호가 일치하지 않습니다.'
+        </div>
+      </div>
+      <div class="button-wrapper">
+        <q-space/>
+        <q-btn color="primary" label="로그인" size="lg" unelevated type="submit"/>
+        <q-btn color="primary" label="회원가입" size="lg" unelevated type="reset"/>
+      </div>
+    </form>
   </div>
 </template>
 
@@ -25,11 +46,16 @@ import {useRouter} from "vue-router";
 import {userInfo} from '../../store/user'
 import jwt_decode from "jwt-decode";
 
-const email = ref('admin@email.com')
-const pw = ref('12345678')
-const message = ref(null)
+const email = ref(null)
+const pw = ref(null)
 const router = useRouter()
 const user = userInfo()
+const isPwd = ref(true)
+const errorMessage = ref(false)
+
+const isRequired = (val) => {
+  return  !!val || '필수 입력값입니다.'
+}
 
 const login = async () => {
   try {
@@ -50,12 +76,11 @@ const login = async () => {
         isLogin: true
       })
       await router.push('/main')
-    } else {
-      //에러 메세지 처리
     }
 
   } catch (error) {
-    console.log(error);
+    console.log('error');
+    errorMessage.value = true
   }
 }
 
@@ -81,4 +106,9 @@ const join = () => {
 </script>
 
 <style lang="scss" scoped>
+.error-message {
+  font-size: 12px;
+  color: #c10015;
+  padding: 8px 12px 0;
+}
 </style>

@@ -40,12 +40,12 @@
             v-model="pw"
             class="q-mb-md"
             label="비밀번호"
-            maxlength="8"
+            maxlength="10"
             :type="isPwd ? 'password' : 'text'"
-            hint="비밀번호는 4글자 이하로 설정해주세요."
+            hint="비밀번호는 8~10글자 이하로 설정해주세요."
             :rules="[
                 val => isRequired(val),
-                val => val.length <= 4 || '비밀번호는 4글자 이하로 설정해주세요.'
+                val => (8 <= val.length || val.length >= 10) || '비밀번호는 8~10글자 이하로 설정해주세요.'
                 ]"
             outlined>
           <template v-slot:append>
@@ -126,7 +126,6 @@ const isPwdCheck = ref(true)
 const router = useRouter()
 
 const join = async () => {
-  console.log(joinEmail())
   try {
     const response = await axios.post('https://jssampletest.herokuapp.com/api/auth/signup', {
       email: joinEmail(),
