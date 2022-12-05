@@ -59,7 +59,7 @@ const isRequired = (val) => {
 
 const login = async () => {
   try {
-    const response = await axios.post('https://jssampletest.herokuapp.com/api/auth/login', {
+    const response = await axios.post('https://jssampletest.herokuapp.com/api/auth/login/', {
       email: email.value,
       password: pw.value
     })
